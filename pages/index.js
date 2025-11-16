@@ -11,12 +11,24 @@ const addTodoForm = addTodoPopup.querySelector(".popup__form");
 const addTodoCloseBtn = addTodoPopup.querySelector(".popup__close");
 const todosList = document.querySelector(".todos__list");
 
+// handle closing popup with Escape key
+const handleEscClose = (evt) => {
+  if (evt.key === "Escape") {
+    const openedPopup = document.querySelector(".popup_visible");
+    if (openedPopup) {
+      closeModal(openedPopup);
+    }
+  }
+};
+
 const openModal = (modal) => {
   modal.classList.add("popup_visible");
+  document.addEventListener("keydown", handleEscClose);
 };
 
 const closeModal = (modal) => {
   modal.classList.remove("popup_visible");
+  document.removeEventListener("keydown", handleEscClose);
 };
 
 // creates Todo instance and returns DOM node
@@ -44,6 +56,13 @@ addTodoButton.addEventListener("click", () => {
 
 addTodoCloseBtn.addEventListener("click", () => {
   closeModal(addTodoPopup);
+});
+
+// optional: close popup when clicking on the overlay/background
+addTodoPopup.addEventListener("mousedown", (evt) => {
+  if (evt.target === addTodoPopup) {
+    closeModal(addTodoPopup);
+  }
 });
 
 // submit form
