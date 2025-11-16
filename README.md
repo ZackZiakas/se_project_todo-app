@@ -1,17 +1,25 @@
-# Simple Todo App
+Simple Todo App
 
-Give a brief description of the project here. Feel free to give it a different name.
+A lightweight and clean Todo application that lets you add tasks, mark them as complete, and delete them. It was built as part of a school project to practice DOM manipulation, modular JavaScript, form validation, and working with reusable components.
 
-## Functionality
+Functionality:
+Add new todos with an optional due date
+Mark tasks as completed
+Delete tasks individually
+Form validation for required fields
+Popup form with smooth open/close animations
+Task states and UI update instantly without reloading the page
+Layout adapts for mobile screens
 
-Give a more detailed explanation of the project and its functionality.
+Technology:
+HTML5 for structure
+CSS3 for layout, animations, and responsive design
+JavaScript (ES6 modules) for logic and component structure
+Class-based components (Todo, FormValidator)
+UUID library for generating unique task IDs
+Template cloning for rendering todos
+GitHub Pages for deployment
+Deployment
 
-## Technology
-
-Give a description of the technologies and techniques used. Pictures, GIFs, or screenshots that detail the project features are recommended.
-
-## Deployment
-
-This project is deployed on GitHub Pages:
-
-- ADD LINK HERE
+This project is live on GitHub Pages:
+https://zackziakas.github.io/se_project_todo-app/

@@ -22,12 +22,23 @@ const closeModal = (modal) => {
 // creates Todo instance and returns DOM node
 const generateTodo = (data) => {
   const todo = new Todo(data, "#todo-template");
-  const todoElement = todo.getView();
-  return todoElement;
+  return todo.getView();
 };
+
+// helper to avoid repeated generate + append logic
+const addTodoToList = (data) => {
+  const todoElement = generateTodo(data);
+  todosList.append(todoElement);
+};
+
+// init validator BEFORE using it in listeners
+const newTodoValidator = new FormValidator(validationConfig, addTodoForm);
+newTodoValidator.enableValidation();
 
 // open / close popup
 addTodoButton.addEventListener("click", () => {
+  // clear old values + errors and reset button
+  newTodoValidator.resetValidation();
   openModal(addTodoPopup);
 });
 
@@ -46,7 +57,6 @@ addTodoForm.addEventListener("submit", (evt) => {
     return;
   }
 
-  // keep raw date string; Todo will format it
   const id = uuidv4();
 
   const values = {
@@ -56,19 +66,14 @@ addTodoForm.addEventListener("submit", (evt) => {
     completed: false,
   };
 
-  const todoElement = generateTodo(values);
-  todosList.append(todoElement);
+  addTodoToList(values);
 
-  addTodoForm.reset();
+  // use validator to reset form + errors + button state
+  newTodoValidator.resetValidation();
   closeModal(addTodoPopup);
 });
 
 // render initial todos
 initialTodos.forEach((item) => {
-  const todoElement = generateTodo(item);
-  todosList.append(todoElement);
+  addTodoToList(item);
 });
-
-// enable validation
-const newTodoValidator = new FormValidator(validationConfig, addTodoForm);
-newTodoValidator.enableValidation();

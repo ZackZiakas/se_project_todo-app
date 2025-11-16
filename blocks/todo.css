@@ -59,6 +59,7 @@
   margin-left: auto;
 }
 
+/* 🔹 Desktop / default delete button styles */
 .todo__delete-btn {
   border: none;
   padding: 0;
@@ -68,10 +69,25 @@
   font-weight: 500;
   color: #f44;
   cursor: pointer;
+  opacity: 0.9;
+  transition: color 0.2s ease, opacity 0.2s ease, transform 0.2s ease;
 }
 
 .todo__delete-btn::before {
   content: "Delete";
+}
+
+/* 🔹 Hover state (required) */
+.todo__delete-btn:hover {
+  color: #d00000;
+  opacity: 1;
+  transform: scale(1.05);
+}
+
+/* 🔹 Keyboard accessibility */
+.todo__delete-btn:focus-visible {
+  outline: 2px solid #5877e7; /* match your accent color */
+  outline-offset: 2px;
 }
 
 @media screen and (max-width: 630px) {
@@ -97,10 +113,16 @@
     font-size: 12px;
   }
 
+  /* 🔹 Mobile icon version of delete button */
   .todo__delete-btn {
+    grid-area: delete;
     background-image: url(../images/delete-icon.svg);
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: contain;
     width: 24px;
     height: 24px;
+    font-size: 0; /* hide any text fallback */
   }
 
   .todo__delete-btn::before {

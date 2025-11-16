@@ -141,6 +141,14 @@
   margin-top: 20px;
 }
 
+/* 🔹 Disabled state for validator */
+.popup__button_disabled {
+  background-color: #a9b7f2; /* lighter / inactive color */
+  cursor: not-allowed;
+  opacity: 0.7;
+  pointer-events: none;
+}
+
 @media screen and (max-width: 630px) {
   .popup {
     align-items: flex-end;

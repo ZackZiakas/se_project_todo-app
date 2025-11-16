@@ -1,4 +1,3 @@
-// components/FormValidator.js
 class FormValidator {
   constructor(settings, formEl) {
     this._settings = settings;
@@ -72,11 +71,23 @@ class FormValidator {
   }
 
   resetValidation() {
-    this._toggleButtonState();
+    // make sure _inputList exists (in case resetValidation is called early)
+    if (!this._inputList) {
+      this._inputList = Array.from(
+        this._formEl.querySelectorAll(this._inputSelector)
+      );
+    }
 
+    // 1) clear form fields
+    this._formEl.reset();
+
+    // 2) hide all error messages
     this._inputList.forEach((inputElement) => {
       this._hideInputError(inputElement);
     });
+
+    // 3) update button state (usually disables it)
+    this._toggleButtonState();
   }
 
   enableValidation() {
