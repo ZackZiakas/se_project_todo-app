@@ -1,4 +1,3 @@
-// pages/index.js
 import { v4 as uuidv4 } from "https://jspm.dev/uuid";
 
 import { initialTodos, validationConfig } from "../utils/constants.js";
@@ -11,6 +10,7 @@ import TodoCounter from "../components/TodoCounter.js";
 const addTodoButton = document.querySelector(".button_action_add");
 const addTodoPopupSelector = "#add-todo-popup";
 const addTodoForm = document.querySelector("#add-todo-form");
+const todosListElement = document.querySelector(".todos__list");
 
 // ---------- Validator ----------
 const newTodoValidator = new FormValidator(validationConfig, addTodoForm);
@@ -19,55 +19,51 @@ newTodoValidator.enableValidation();
 // ---------- TodoCounter ----------
 const todoCounter = new TodoCounter(initialTodos, ".counter__text");
 
-// helper: attach counter listeners to each todo DOM node
-const attachCounterListeners = (todoElement) => {
-  const checkbox = todoElement.querySelector(".todo__completed");
-  const deleteBtn = todoElement.querySelector(".todo__delete-btn");
-
-  if (checkbox) {
-    checkbox.addEventListener("change", () => {
-      if (checkbox.checked) {
-        todoCounter.updateCompleted(true);
-      } else {
-        todoCounter.updateCompleted(false);
-      }
-    });
-  }
-
-  if (deleteBtn) {
-    deleteBtn.addEventListener("click", () => {
-      // if it was completed when deleted, decrement completed count
-      if (checkbox && checkbox.checked) {
-        todoCounter.updateCompleted(false);
-      }
-      todoCounter.updateTotal(false);
-      // actual removal is handled inside Todo class
-    });
-  }
-};
-
 // ---------- Create todo DOM element ----------
 const createTodoElement = (data) => {
   const todo = new Todo(data, "#todo-template");
-  const element = todo.getView();
-  attachCounterListeners(element);
-  return element;
+  return todo.getView();
 };
 
 // ---------- Section for todos ----------
-const todosSection = new Section(
-  {
-    items: initialTodos,
-    renderer: (item) => {
-      const todoElement = createTodoElement(item);
-      todosSection.addItem(todoElement);
-    },
+const todosSection = new Section({
+  items: initialTodos,
+  renderer: (item) => {
+    const todoElement = createTodoElement(item);
+    todosSection.addItem(todoElement);
   },
-  ".todos__list"
-);
+  containerSelector: ".todos__list",
+});
 
 // render initial items
 todosSection.renderItems();
+
+// ---------- Counter updates via delegated listeners ----------
+todosListElement.addEventListener("change", (evt) => {
+  if (evt.target.classList.contains("todo__completed")) {
+    // checkbox toggled
+    todoCounter.updateCompleted(evt.target.checked);
+  }
+});
+
+todosListElement.addEventListener("click", (evt) => {
+  if (evt.target.classList.contains("todo__delete-btn")) {
+    const todoItem = evt.target.closest(".todo");
+    if (!todoItem) {
+      return;
+    }
+
+    const checkbox = todoItem.querySelector(".todo__completed");
+
+    // if todo was completed when deleted, decrement completed count
+    if (checkbox && checkbox.checked) {
+      todoCounter.updateCompleted(false);
+    }
+
+    // in all cases, total count goes down by 1
+    todoCounter.updateTotal(false);
+  }
+});
 
 // ---------- PopupWithForm for "Add Todo" ----------
 const addTodoPopup = new PopupWithForm(
@@ -91,7 +87,7 @@ const addTodoPopup = new PopupWithForm(
     // update total count for new todo
     todoCounter.updateTotal(true);
 
-    // reset validation and close popup
+    // reset validation and close popup after successful submit
     newTodoValidator.resetValidation();
     addTodoPopup.close();
   }
@@ -99,8 +95,8 @@ const addTodoPopup = new PopupWithForm(
 
 addTodoPopup.setEventListeners();
 
-// ---------- Listener to open popup (only listener left on the form/popup) ----------
+// ---------- Listener to open popup ----------
 addTodoButton.addEventListener("click", () => {
-  newTodoValidator.resetValidation();
+  // no extra resetValidation() here — it already runs after submit
   addTodoPopup.open();
 });
